@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+			padding:0;
+			background-image: url('/static/images/salepic2.jpg'); /* Updated path */
+            background-size: cover; /* Ensures the image covers the entire screen */
+    background-repeat: no-repeat; /* Prevents tiling */
+    background-attachment: fixed; /* Keeps the background fixed during scrolling */
+    background-position: center; /* Centers the image */
+    height: 100vh; /* Ensures the body height fills the viewport */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input, button {
+            width: calc(100% - 22px); /* Ensures inputs fit inside the container */
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Prevents overflow */
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sales Prediction</h1>
+        <form id="predictionForm">
+            <input type="text" name="TV" placeholder="TV Advertising Budget" required>
+            <input type="text" name="Radio" placeholder="Radio Advertising Budget" required>
+            <input type="text" name="Newspaper" placeholder="Newspaper Advertising Budget" required>
+            <button type="submit">Predict Sales</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const formObject = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formObject), // Send JSON data
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                document.getElementById('result').innerHTML = `<h3>Predicted Sales: ${result.prediction.toFixed(2)}</h3>`;
+            } else {
+                document.getElementById('result').innerHTML = '<h3>Error occurred while predicting sales.</h3>';
+            }
+        });
+    </script>
+</body>
+</html>
